@@ -31,6 +31,14 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.elm$/,
+        exclude: [/elm-stuff/, /node_modules/],
+        use: [
+          { loader: 'elm-hot-webpack-loader' },
+          { loader: 'elm-webpack-loader' },
+        ],
+      },
+      {
         test: /\.(js|jsx)$/i,
         loader: 'babel-loader',
       },
