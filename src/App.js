@@ -10,6 +10,7 @@ function App() {
 
   return (
     <div className='App'>
+      <h1>Todo List App</h1>
       <Todos items={items} />
       <TodoForm addItem={addItem} />
     </div>
