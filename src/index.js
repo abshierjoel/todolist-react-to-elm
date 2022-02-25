@@ -1,5 +1,10 @@
 import './index.css';
-import './App.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import App from './App';
 import { Elm } from './App.elm';
 
-Elm.App.init({ node: document.getElementById('root') });
+const elmApp = Elm.App.init({ node: document.getElementById('elm-root') });
+
+ReactDOM.render(<App ports={elmApp.ports} />, document.getElementById('root'));

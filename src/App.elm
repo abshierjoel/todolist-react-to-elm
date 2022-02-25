@@ -1,9 +1,7 @@
-module App exposing (main)
+port module App exposing (main)
 
 import Browser
-import Html exposing (Html, div, form, h1, input, li, text, ul)
-import Html.Attributes exposing (class, type_, value)
-import Html.Events exposing (onInput, onSubmit)
+import Html exposing (Html, div)
 
 
 
@@ -16,7 +14,7 @@ main =
         { init = \_ -> init
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
 
 
@@ -25,11 +23,25 @@ init =
     ( initialModel, Cmd.none )
 
 
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    addItem SubmittedForm
+
+
 initialModel : Model
 initialModel =
     { items = []
-    , inputText = ""
     }
+
+
+
+---- PORTS ----
+
+
+port addItem : (String -> msg) -> Sub msg
+
+
+port sendItems : List String -> Cmd msg
 
 
 
@@ -38,13 +50,11 @@ initialModel =
 
 type alias Model =
     { items : List String
-    , inputText : String
     }
 
 
 type Msg
-    = ChangedText String
-    | SubmittedForm
+    = SubmittedForm String
 
 
 
@@ -54,15 +64,12 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangedText text ->
-            ( { model | inputText = text }, Cmd.none )
-
-        SubmittedForm ->
+        SubmittedForm newItem ->
             let
                 items =
-                    model.inputText :: model.items
+                    newItem :: model.items
             in
-            ( { model | items = items, inputText = "" }, Cmd.none )
+            ( { model | items = items }, sendItems items )
 
 
 
@@ -70,22 +77,5 @@ update msg model =
 
 
 view : Model -> Html Msg
-view model =
-    div [ class "App" ]
-        [ h1 [] [ text "Todo List" ]
-        , viewTodos model.items
-        , viewTodoForm model.inputText
-        ]
-
-
-viewTodos : List String -> Html Msg
-viewTodos items =
-    ul [] (List.map (\item -> li [] [ text item ]) items)
-
-
-viewTodoForm : String -> Html Msg
-viewTodoForm inputText =
-    form [ onSubmit SubmittedForm ]
-        [ input [ type_ "text", onInput ChangedText, value inputText ] []
-        , input [ type_ "submit", value "Add" ] []
-        ]
+view _ =
+    div [] []
